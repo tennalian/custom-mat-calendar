@@ -1,1 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
+.mat-calendar-body-cell-content {
+  position: relative;
+}
+
+.mat-calendar-body-cell-content.extra-visit {
+  background: orange;
+}
+
+.mat-calendar-body-cell-content.planned-visit::before {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: green;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
