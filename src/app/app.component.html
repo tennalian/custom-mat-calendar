@@ -1,2 +1,5 @@
-<h1>ANGULAR APP</h1>
-<calendar></calendar>
+<h1>{{title}}</h1>
+<calendar
+(selectedDate)="updateDate($event)"
+[extraVisitDates]="extraVisitDates"
+[plannedVisitDates]="plannedVisitDates"></calendar>

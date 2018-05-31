@@ -8,10 +8,19 @@ import { ComponentPortal, ComponentType, Portal } from '@angular/cdk/portal';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'app';
-  date: Date;
+  title = 'MAT CALENDAR CUSTOMIZATION';
 
-  update(date) {
-    console.log(date);
+  extraVisitDates = [
+    new Date(),
+    new Date(2018,4,5),
+    new Date(2018,4,18)
+  ];
+
+  plannedVisitDates = [
+    new Date(2018,4,5)
+  ];
+
+  updateDate(date) {
+    this.extraVisitDates = [...this.extraVisitDates, date];
   }
 }

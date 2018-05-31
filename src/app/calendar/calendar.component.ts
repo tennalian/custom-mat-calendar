@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Host, ChangeDetectorRef, Inject, Optional, AfterViewInit, NgZone, OnChanges, Input, Renderer2, Renderer, ElementRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, Host, ChangeDetectorRef, Inject, EventEmitter, Optional, AfterViewInit, NgZone, OnChanges, Input, Renderer2, Renderer, ElementRef, OnDestroy, Output } from '@angular/core';
 import { MatCalendar, MatCalendarHeader } from '@angular/material';
 import { DateAdapter, MAT_DATE_FORMATS, MatDateFormats } from '@angular/material/core';
 
@@ -15,6 +15,7 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
   @ViewChild(MatCalendarHeader) header: MatCalendarHeader<any>;
   @Input() extraVisitDates: Date[] = [];
   @Input() plannedVisitDates: Date[] = [];
+  @Output() selectedDate: EventEmitter<Date> = new EventEmitter();
   activeDate: Date;
   activeYearDate: Date;
   listenClickViewBtnFunc: Function;
@@ -24,22 +25,12 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
   constructor(
     @Inject(MAT_DATE_FORMATS)  private _dateFormats: MatDateFormats,
     private element: ElementRef,
-    private _adapter: DateAdapter<Date>,
-    private zone: NgZone,
     private renderer: Renderer,
+    private _adapter: DateAdapter<Date>,
     private _changeDetectorRef: ChangeDetectorRef
   ) {
     this.activeDate = this._adapter.today();
     this.activeYearDate = this._adapter.today();
-    this.extraVisitDates = [
-      new Date(),
-      new Date(2018,4,5),
-      new Date(2018,4,18)
-    ];
-
-    this.plannedVisitDates = [
-      new Date(2018,4,5)
-    ];
   }
 
   ngOnChanges() {
@@ -47,8 +38,8 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
   }
 
   ngAfterViewInit() {
-    console.log(this.calendar);
     this.calendar.stateChanges.subscribe(() => setTimeout(() => this.checkCurrentView()));
+    this.calendar.selectedChange.subscribe((d) => this.selectedDate.emit(d));
     const btn = this.element.nativeElement.querySelector('.mat-calendar-period-button');
     const btnPrev = this.element.nativeElement.querySelector('.mat-calendar-previous-button');
     const btnNext= this.element.nativeElement.querySelector('.mat-calendar-next-button');
@@ -80,6 +71,7 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
       this.listenClickPrevBtnFunc();
     }
     this.calendar.stateChanges.unsubscribe();
+    this.calendar.selectedChange.unsubscribe();
   }
 
   checkCurrentView() {
@@ -112,7 +104,6 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
     for (let i = 0; i < YEARS_PER_PAGE; i++) {
       years.push(activeYear - activeOffset + i);
     }
-
     years.forEach(y => this.addPointsToYears(y));
   }
 
@@ -173,14 +164,14 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
 
     if (this.calendar.currentView === 'month') {
       if (isExtra && el) {
-        el.querySelector('.mat-calendar-body-cell-content').classList.add('extra-visit');
+        el.querySelector('.mat-calendar-body-cell-content').classList.add('extra-point');
       }
       if (isPlanned && el) {
-        el.querySelector('.mat-calendar-body-cell-content').classList.add('planned-visit');
+        el.querySelector('.mat-calendar-body-cell-content').classList.add('planned-point');
       }
     } else {
       if (el && (isExtra || isPlanned)) {
-        el.querySelector('.mat-calendar-body-cell-content').classList.add('info-visit');
+        el.querySelector('.mat-calendar-body-cell-content').classList.add('info-point');
       }
     }
   }

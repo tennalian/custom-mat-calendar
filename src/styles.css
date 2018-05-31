@@ -3,11 +3,11 @@
   position: relative;
 }
 
-.mat-calendar-body-cell-content.extra-visit {
+.mat-calendar-body-cell-content.extra-point {
   background: orange;
 }
 
-.mat-calendar-body-cell-content.planned-visit::before {
+.mat-calendar-body-cell-content.planned-point::before {
   content: '';
   display: block;
   width: 10px;
@@ -19,7 +19,7 @@
   right: 2px;
 }
 
-.mat-calendar-body-cell-content.info-visit::before {
+.mat-calendar-body-cell-content.info-point::before {
   content: '';
   display: block;
   width: 10px;
