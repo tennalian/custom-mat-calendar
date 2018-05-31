@@ -18,3 +18,15 @@
   top: 2px;
   right: 2px;
 }
+
+.mat-calendar-body-cell-content.info-visit::before {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: blue;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}

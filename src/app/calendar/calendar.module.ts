@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatDatepickerModule, MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material';
+import { MatDatepickerModule, MatNativeDateModule, MAT_DATE_LOCALE, MatMonthView } from '@angular/material';
 
 import { CalendarComponent } from './calendar.component';
 
