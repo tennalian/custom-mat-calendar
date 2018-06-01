@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Host, ChangeDetectorRef, Inject, EventEmitter, Optional, AfterViewInit, NgZone, OnChanges, Input, Renderer2, Renderer, ElementRef, OnDestroy, Output } from '@angular/core';
-import { MatCalendar, MatCalendarHeader } from '@angular/material';
+import { MatCalendar } from '@angular/material';
 import { DateAdapter, MAT_DATE_FORMATS, MatDateFormats } from '@angular/material/core';
 
 const YEARS_PER_PAGE = 24;
@@ -12,7 +12,6 @@ const DAYS_PER_WEEK = 7;
 export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
 
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
-  @ViewChild(MatCalendarHeader) header: MatCalendarHeader<any>;
   @Input() extraVisitDates: Date[] = [];
   @Input() plannedVisitDates: Date[] = [];
   @Output() selectedDate: EventEmitter<Date> = new EventEmitter();
@@ -50,11 +49,19 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
         this.activeYearDate = this._adapter.addCalendarYears(this.activeYearDate, YEARS_PER_PAGE);
         this.getYears();
       }
+      if (this.calendar.currentView === 'month') {
+        this.activeDate = this._adapter.addCalendarMonths(this.activeDate, 1);
+        this.getDates();
+      }
     });
     this.listenClickPrevBtnFunc = this.renderer.listenGlobal(btnPrev, 'click', (event: MouseEvent) => {
       if (this.calendar.currentView === 'multi-year') {
         this.activeYearDate = this._adapter.addCalendarYears(this.activeYearDate, -YEARS_PER_PAGE);
         this.getYears();
+      }
+      if (this.calendar.currentView === 'month') {
+        this.activeDate = this._adapter.addCalendarMonths(this.activeDate, -1);
+        this.getDates();
       }
     });
     this.checkCurrentView();
