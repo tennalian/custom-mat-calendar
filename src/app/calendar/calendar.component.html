@@ -1,6 +1,8 @@
 
 <mat-calendar
+  [ngClass]="{'mat-customize': header}"
   [headerComponent]="header"
   [minDate]="minDate"
   [maxDate]="maxDate"
+  [selected]="today"
   [dateFilter]="dateFilter"></mat-calendar>

@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, Host, ChangeDetectorRef, Inject, EventEmi
 import { MatCalendar } from '@angular/material';
 import { DateAdapter, MAT_DATE_FORMATS, MatDateFormats, NativeDateAdapter } from '@angular/material/core';
 import * as moment from 'moment';
+import { Subscription } from 'rxjs';
 
 const YEARS_PER_PAGE = 24;
 const DAYS_PER_WEEK = 7;
@@ -42,11 +43,13 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
   @Input() maxDate: Date;
   @Input() dateFilter: Function;
   @Output() selectedDate: EventEmitter<Date> = new EventEmitter();
+  today: Date;
   activeDate: Date;
   activeYearDate: Date;
   listenClickViewBtnFunc: Function;
   listenClickNextBtnFunc: Function;
   listenClickPrevBtnFunc: Function;
+  private subscriptions: Subscription[] = [];
 
   constructor(
     @Inject(MAT_DATE_FORMATS)  private _dateFormats: MatDateFormats,
@@ -55,6 +58,7 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
     private _adapter: DateAdapter<Date>,
     private _changeDetectorRef: ChangeDetectorRef
   ) {
+    this.today = this._adapter.today();
     this.activeDate = this._adapter.today();
     this.activeYearDate = this._adapter.today();
   }
@@ -64,33 +68,60 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
   }
 
   ngAfterViewInit() {
-    this.calendar.stateChanges.subscribe(() => setTimeout(() => this.checkCurrentView()));
-    this.calendar.selectedChange.subscribe((d) => this.selectedDate.emit(d));
-    const btn = this.element.nativeElement.querySelector('.mat-calendar-period-button');
-    const btnPrev = this.element.nativeElement.querySelector('.mat-calendar-previous-button');
-    const btnNext= this.element.nativeElement.querySelector('.mat-calendar-next-button');
+    this.subscriptions = [
+      this.calendar.stateChanges.subscribe(() => setTimeout(() => this.checkCurrentView())),
+      this.calendar.selectedChange.subscribe((d) => this.selectedDate.emit(d)),
+      this.calendar.monthSelected.subscribe((m) => {
+        this.activeDate = m;
+        console.log(m)
+      }),
+      this.calendar.yearSelected.subscribe((y) => {
+        this.activeDate = y
+        console.log(y)
+      })
+    ];
 
-    this.listenClickViewBtnFunc = this.renderer.listenGlobal(btn, 'click', (event: MouseEvent) => this.checkCurrentView());
-    this.listenClickNextBtnFunc = this.renderer.listenGlobal(btnNext, 'click', (event: MouseEvent) => {
-      if (this.calendar.currentView === 'multi-year') {
-        this.activeYearDate = this._adapter.addCalendarYears(this.activeYearDate, YEARS_PER_PAGE);
-        this.getYears();
-      }
-      if (this.calendar.currentView === 'month') {
-        this.activeDate = this._adapter.addCalendarMonths(this.activeDate, 1);
-        this.getDates();
-      }
-    });
-    this.listenClickPrevBtnFunc = this.renderer.listenGlobal(btnPrev, 'click', (event: MouseEvent) => {
-      if (this.calendar.currentView === 'multi-year') {
-        this.activeYearDate = this._adapter.addCalendarYears(this.activeYearDate, -YEARS_PER_PAGE);
-        this.getYears();
-      }
-      if (this.calendar.currentView === 'month') {
-        this.activeDate = this._adapter.addCalendarMonths(this.activeDate, -1);
-        this.getDates();
-      }
-    });
+    let btn = null;
+    let btnPrev = null;
+    let btnNext = null;
+    if (!this.header) {
+      btn = this.element.nativeElement.querySelector('.mat-calendar-period-button');
+      btnPrev = this.element.nativeElement.querySelector('.mat-calendar-previous-button');
+      btnNext= this.element.nativeElement.querySelector('.mat-calendar-next-button');
+    } else {
+      btnPrev = this.element.nativeElement.querySelector('.calendar-previous-button');
+      btnNext= this.element.nativeElement.querySelector('.calendar-next-button');
+    }
+
+    if (btn) {
+      this.listenClickViewBtnFunc = this.renderer.listenGlobal(btn, 'click', (event: MouseEvent) => this.checkCurrentView());
+    }
+
+    if (btnNext) {
+      this.listenClickNextBtnFunc = this.renderer.listenGlobal(btnNext, 'click', (event: MouseEvent) => {
+        if (this.calendar.currentView === 'multi-year') {
+          this.activeYearDate = this._adapter.addCalendarYears(this.activeYearDate, YEARS_PER_PAGE);
+          this.getYears();
+        }
+        if (this.calendar.currentView === 'month') {
+          this.activeDate = this._adapter.addCalendarMonths(this.activeDate, 1);
+          this.getDates();
+        }
+      });
+    }
+
+    if (btnPrev) {
+      this.listenClickPrevBtnFunc = this.renderer.listenGlobal(btnPrev, 'click', (event: MouseEvent) => {
+        if (this.calendar.currentView === 'multi-year') {
+          this.activeYearDate = this._adapter.addCalendarYears(this.activeYearDate, -YEARS_PER_PAGE);
+          this.getYears();
+        }
+        if (this.calendar.currentView === 'month') {
+          this.activeDate = this._adapter.addCalendarMonths(this.activeDate, -1);
+          this.getDates();
+        }
+      });
+    }
     this.checkCurrentView();
   }
 
@@ -104,11 +135,12 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
     if (this.listenClickPrevBtnFunc) {
       this.listenClickPrevBtnFunc();
     }
-    this.calendar.stateChanges.unsubscribe();
-    this.calendar.selectedChange.unsubscribe();
+
+    this.subscriptions.map(s => s.unsubscribe());
   }
 
   checkCurrentView() {
+    console.log(this.calendar.currentView);
     if (this.calendar.currentView === 'month') {
       setTimeout(() => this.getDates());
     }
@@ -162,40 +194,58 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
   addPointsToDates(date: Date) {
     const extraDatesTime = this.extraVisitDates.map(d => String(d.getTime()));
     const plannedDatesTime = this.plannedVisitDates.map(d => String(d.getTime()));
-
     const isExtra = extraDatesTime.includes(String(date.getTime()));
     const isPlanned = plannedDatesTime.includes(String(date.getTime()));
-
     const aria = this._adapter.format(date, this._dateFormats.display.dateA11yLabel);
 
-    this.addPoints(isPlanned, isExtra, aria);
+    if (isExtra || isPlanned) {
+      this.addPoint(isPlanned, isExtra, aria);
+    }
   }
 
   addPointsToMonths(month: number) {
-    const extraDatesTime = this.extraVisitDates.map(d => this._adapter.getMonth(d));
-    const plannedDatesTime = this.plannedVisitDates.map(d => this._adapter.getMonth(d));
-
-    const isExtra = extraDatesTime.includes(month);
-    const isPlanned = plannedDatesTime.includes(month);
-
+    const extraAliases = this.extraVisitDates.map(d => {
+      const m = this._adapter.getMonth(d);
+      return this._adapter.format(this._adapter.createDate(this._adapter.getYear(d), m, 1), this._dateFormats.display.monthYearA11yLabel);
+    });
+    const plannedAliases = this.plannedVisitDates.map(d => {
+      const m = this._adapter.getMonth(d);
+      return this._adapter.format(this._adapter.createDate(this._adapter.getYear(d), m, 1), this._dateFormats.display.monthYearA11yLabel);
+    });
     const aria = this._adapter.format(this._adapter.createDate(this._adapter.getYear(this.activeDate), month, 1), this._dateFormats.display.monthYearA11yLabel);
+    const isExtra = extraAliases.includes(aria);
+    const isPlanned = plannedAliases.includes(aria);
 
-    this.addPoints(isPlanned, isExtra, aria);
+    if (isExtra || isPlanned) {
+      this.addPoint(isPlanned, isExtra, aria);
+    }
   }
 
   addPointsToYears(year: number) {
     const extraDatesTime = this.extraVisitDates.map(d => this._adapter.getYear(d));
     const plannedDatesTime = this.plannedVisitDates.map(d => this._adapter.getYear(d));
-
     const isExtra = extraDatesTime.includes(year);
     const isPlanned = plannedDatesTime.includes(year);
 
-    this.addPoints(isPlanned, isExtra, String(year));
+    if (isExtra || isPlanned) {
+      this.addPoint(isPlanned, isExtra, String(year));
+    }
   }
 
-  addPoints(isPlanned: boolean, isExtra: boolean, aria: string) {
-    const el = document.querySelector(`[aria-label="${aria}"]`);
+  removeAllPoints() {
+    const els = this.element.nativeElement.querySelectorAll('[aria-label]');
+    els.forEach(element => {
+      const point = element.querySelector('.mat-calendar-body-cell-content');
+      if (point) {
+        point.classList.remove('extra-point');
+        point.classList.remove('planned-point');
+        point.classList.remove('info-point');
+      }
+    });
+  }
 
+  addPoint(isPlanned: boolean, isExtra: boolean, aria: string) {
+    const el = this.element.nativeElement.querySelector(`[aria-label="${aria}"]`);
     if (this.calendar.currentView === 'month') {
       if (isExtra && el) {
         el.querySelector('.mat-calendar-body-cell-content').classList.add('extra-point');

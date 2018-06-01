@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { MatCalendar, MatCalendarBody, MatMonthView, MatCalendarHeader } from '@angular/material';
 import { ComponentPortal, ComponentType, Portal } from '@angular/cdk/portal';
 
@@ -10,8 +10,12 @@ import { CustomHeader } from './calendar/calendar-header/calendar-header.compone
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'MAT CALENDAR CUSTOMIZATION';
+  title = 'MAT-CALENDAR CUSTOMIZATION';
   header = CustomHeader;
+
+  constructor(
+    private _changeDetectorRef: ChangeDetectorRef
+  ) {}
 
   extraVisitDates = [
     new Date(),
@@ -25,5 +29,6 @@ export class AppComponent {
 
   updateDate(date) {
     this.extraVisitDates = [...this.extraVisitDates, date];
+    this._changeDetectorRef.markForCheck();
   }
 }

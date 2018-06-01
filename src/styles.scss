@@ -1,4 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
+
+// custom classes
+
 .mat-calendar-body-cell-content {
   position: relative;
 }
@@ -33,31 +36,47 @@
   border: 1px solid #f57c00;
 }
 
-.mat-calendar-body-active {
+.mat-calendar-body-selected  {
   color: #317dc7;
 }
+
+//custom header
 
 .calendar-controls {
   width: 100%;
   padding: 24px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .calendar-label {
   width: 100%;
   white-space: nowrap;
+  text-align: center;
 }
 
 .calendar-button {
   background: transparent;
   border: 0;
   padding: 0 16px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 1px solid black;
+  outline:none;
 }
 
-.mat-calendar-body-label {
-  font-size: 0;
-  color: transparent;
+.mat-customize {
+  .mat-calendar-body-label {
+    font-size: 0;
+    color: transparent;
+  }
+
+  .mat-calendar-body-label[colspan="7"] {
+    display: none;
+  }
 }
 
-.mat-calendar-body-label[colspan="7"] {
-  display: none;
-}
+

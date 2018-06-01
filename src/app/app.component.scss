@@ -12,20 +12,9 @@ h1 {
 .content {
   display: flex;
   width: 100%;
-}
 
-.block {
-  padding: 24px;
-}
-
-.d-flex {
-  display: flex;
-}
-
-.align-items-center {
-  align-items: center
-}
-
-.justify-content-between {
-  justify-content: space-between
+  .block {
+    padding: 24px;
+    width: 100%;;
+  }
 }
