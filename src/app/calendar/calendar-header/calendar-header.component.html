@@ -1,0 +1,17 @@
+<div class="calendar-header d-flex">
+  <div class="calendar-controls d-flex align-items-center justify-content-between">
+    <button type="button" class="calendar-button cursor-pointer calendar-previous-button"
+            [disabled]="!previousEnabled()" (click)="previousClicked()"
+            [attr.aria-label]="prevButtonLabel">
+            <i class="mdi mdi-chevron-left text--secondary"></i>
+    </button>
+
+    <span class="calendar-label typography--regular text--center">{{label}}</span>
+
+    <button type="button" class="calendar-button cursor-pointer calendar-next-button"
+            [disabled]="!nextEnabled()" (click)="nextClicked()"
+            [attr.aria-label]="nextButtonLabel">
+            <i class="mdi mdi-chevron-right text--secondary"></i>
+    </button>
+  </div>
+</div>

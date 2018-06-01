@@ -8,3 +8,24 @@ h1 {
   font-size: 18px;
   text-align: center;
 }
+
+.content {
+  display: flex;
+  width: 100%;
+}
+
+.block {
+  padding: 24px;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.align-items-center {
+  align-items: center
+}
+
+.justify-content-between {
+  justify-content: space-between
+}

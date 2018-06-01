@@ -1,19 +1,46 @@
 import { Component, OnInit, ViewChild, Host, ChangeDetectorRef, Inject, EventEmitter, Optional, AfterViewInit, NgZone, OnChanges, Input, Renderer2, Renderer, ElementRef, OnDestroy, Output } from '@angular/core';
 import { MatCalendar } from '@angular/material';
-import { DateAdapter, MAT_DATE_FORMATS, MatDateFormats } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_FORMATS, MatDateFormats, NativeDateAdapter } from '@angular/material/core';
+import * as moment from 'moment';
 
 const YEARS_PER_PAGE = 24;
 const DAYS_PER_WEEK = 7;
 
+export class CustomDateAdapter extends NativeDateAdapter {
+  private localeData = moment.localeData('ru-RU');
+
+  getFirstDayOfWeek(): number {
+    return 1;
+  }
+
+  getDayOfWeekNames(style: 'long' | 'short' | 'narrow'): string[] {
+    switch (style) {
+      case 'long':
+        return this.localeData.weekdays();
+      case 'short':
+        return this.localeData.weekdaysShort();
+      case 'narrow':
+        return this.localeData.weekdaysShort();
+    }
+  }
+}
+
 @Component({
   selector: 'calendar',
-  templateUrl: './calendar.component.html'
+  templateUrl: './calendar.component.html',
+  providers: [
+    { provide: DateAdapter, useClass: CustomDateAdapter }
+  ]
 })
 export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
 
   @ViewChild(MatCalendar) calendar: MatCalendar<Date>;
   @Input() extraVisitDates: Date[] = [];
   @Input() plannedVisitDates: Date[] = [];
+  @Input() header:any = null;
+  @Input() minDate: Date;
+  @Input() maxDate: Date;
+  @Input() dateFilter: Function;
   @Output() selectedDate: EventEmitter<Date> = new EventEmitter();
   activeDate: Date;
   activeYearDate: Date;

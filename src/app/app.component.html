@@ -1,5 +1,22 @@
 <h1>{{title}}</h1>
-<calendar
-(selectedDate)="updateDate($event)"
-[extraVisitDates]="extraVisitDates"
-[plannedVisitDates]="plannedVisitDates"></calendar>
+
+<div class="content">
+  <div class="block">
+    <p>Calendar</p>
+    <calendar
+      (selectedDate)="updateDate($event)"
+      [extraVisitDates]="extraVisitDates"
+      [plannedVisitDates]="plannedVisitDates"></calendar>
+  </div>
+
+
+  <div class="block">
+    <p>Calendar month with another header</p>
+    <calendar
+      (selectedDate)="updateDate($event)"
+      [extraVisitDates]="extraVisitDates"
+      [header]="header"
+      [plannedVisitDates]="plannedVisitDates"></calendar>
+  </div>
+</div>
+

@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { MatCalendar, MatCalendarBody, MatMonthView, MatCalendarHeader } from '@angular/material';
 import { ComponentPortal, ComponentType, Portal } from '@angular/cdk/portal';
 
+import { CustomHeader } from './calendar/calendar-header/calendar-header.component';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -9,6 +11,7 @@ import { ComponentPortal, ComponentType, Portal } from '@angular/cdk/portal';
 })
 export class AppComponent {
   title = 'MAT CALENDAR CUSTOMIZATION';
+  header = CustomHeader;
 
   extraVisitDates = [
     new Date(),

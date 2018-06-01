@@ -3,8 +3,16 @@
   position: relative;
 }
 
-.mat-calendar-body-cell-content.extra-point {
-  background: orange;
+.mat-calendar-body-cell-content.info-point::before {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #317dc7;
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .mat-calendar-body-cell-content.planned-point::before {
@@ -13,20 +21,43 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: green;
+  background: #4caf50;
   position: absolute;
-  top: 2px;
-  right: 2px;
+  top: 0;
+  right: 0;
 }
 
-.mat-calendar-body-cell-content.info-point::before {
-  content: '';
-  display: block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: blue;
-  position: absolute;
-  top: 2px;
-  right: 2px;
+.mat-calendar-body-cell-content.extra-point {
+  padding: 0 2px;
+  background: rgba(#f57c00, .8);
+  border: 1px solid #f57c00;
+}
+
+.mat-calendar-body-active {
+  color: #317dc7;
+}
+
+.calendar-controls {
+  width: 100%;
+  padding: 24px 0;
+}
+
+.calendar-label {
+  width: 100%;
+  white-space: nowrap;
+}
+
+.calendar-button {
+  background: transparent;
+  border: 0;
+  padding: 0 16px;
+}
+
+.mat-calendar-body-label {
+  font-size: 0;
+  color: transparent;
+}
+
+.mat-calendar-body-label[colspan="7"] {
+  display: none;
 }
