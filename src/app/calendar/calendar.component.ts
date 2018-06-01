@@ -44,6 +44,7 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
   @Input() dateFilter: Function;
   @Output() selectedDate: EventEmitter<Date> = new EventEmitter();
   today: Date;
+  tmpActiveDate: Date;
   activeDate: Date;
   activeYearDate: Date;
   listenClickViewBtnFunc: Function;
@@ -61,6 +62,7 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
     this.today = this._adapter.today();
     this.activeDate = this._adapter.today();
     this.activeYearDate = this._adapter.today();
+    this.tmpActiveDate = this.activeDate;
   }
 
   ngOnChanges() {
@@ -73,12 +75,9 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
       this.calendar.selectedChange.subscribe((d) => this.selectedDate.emit(d)),
       this.calendar.monthSelected.subscribe((m) => {
         this.activeDate = m;
-        console.log(m)
+        this.tmpActiveDate = this.activeDate;
       }),
-      this.calendar.yearSelected.subscribe((y) => {
-        this.activeDate = y
-        console.log(y)
-      })
+      this.calendar.yearSelected.subscribe((y) => this.activeDate = y)
     ];
 
     let btn = null;
@@ -94,7 +93,21 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
     }
 
     if (btn) {
-      this.listenClickViewBtnFunc = this.renderer.listenGlobal(btn, 'click', (event: MouseEvent) => this.checkCurrentView());
+      this.listenClickViewBtnFunc = this.renderer.listenGlobal(btn, 'click', (event: MouseEvent) => {
+        if (this.calendar.currentView === 'month') {
+          // bug here, need find active date
+
+          // const month = this._adapter.getMonth(this.tmpActiveDate);
+          // const year = this._adapter.getYear(this.activeDate);
+          // const date = new Date(year, month, 1);
+          // console.log('tmpActiveDate', this.tmpActiveDate);
+          // console.log('activeDate',this.activeDate);
+          // console.log('activeYearDate',this.activeYearDate);
+          // console.log('date', date);
+          // this.activeDate = this.tmpActiveDate || this.activeYearDate;
+        }
+        this.checkCurrentView();
+      });
     }
 
     if (btnNext) {
@@ -103,8 +116,13 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
           this.activeYearDate = this._adapter.addCalendarYears(this.activeYearDate, YEARS_PER_PAGE);
           this.getYears();
         }
+        if (this.calendar.currentView === 'year') {
+          this.activeYearDate = this._adapter.addCalendarYears(this.activeYearDate, 1);
+          this.getMonths();
+        }
         if (this.calendar.currentView === 'month') {
           this.activeDate = this._adapter.addCalendarMonths(this.activeDate, 1);
+          this.tmpActiveDate = this.activeDate;
           this.getDates();
         }
       });
@@ -116,8 +134,13 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
           this.activeYearDate = this._adapter.addCalendarYears(this.activeYearDate, -YEARS_PER_PAGE);
           this.getYears();
         }
+        if (this.calendar.currentView === 'year') {
+          this.activeYearDate = this._adapter.addCalendarYears(this.activeYearDate, -1);
+          this.getMonths();
+        }
         if (this.calendar.currentView === 'month') {
           this.activeDate = this._adapter.addCalendarMonths(this.activeDate, -1);
+          this.tmpActiveDate = this.activeDate;
           this.getDates();
         }
       });
@@ -140,7 +163,6 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
   }
 
   checkCurrentView() {
-    console.log(this.calendar.currentView);
     if (this.calendar.currentView === 'month') {
       setTimeout(() => this.getDates());
     }
