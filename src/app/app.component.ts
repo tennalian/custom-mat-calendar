@@ -17,8 +17,9 @@ export class AppComponent {
     private _changeDetectorRef: ChangeDetectorRef
   ) {}
 
+  //don't set date as new Date(), because it sets time other than 00:00:00
   extraVisitDates = [
-    new Date(),
+    new Date(2018,5,3),
     new Date(2018,4,5),
     new Date(2018,4,18)
   ];

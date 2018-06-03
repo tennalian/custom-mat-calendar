@@ -77,7 +77,10 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
         this.activeDate = m;
         this.tmpActiveDate = this.activeDate;
       }),
-      this.calendar.yearSelected.subscribe((y) => this.activeDate = y)
+      this.calendar.yearSelected.subscribe((y) => {
+        this.activeDate = y;
+        this.activeYearDate = y;
+      })
     ];
 
     let btn = null;
@@ -95,16 +98,11 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
     if (btn) {
       this.listenClickViewBtnFunc = this.renderer.listenGlobal(btn, 'click', (event: MouseEvent) => {
         if (this.calendar.currentView === 'month') {
-          // bug here, need to find active date
-
-          // const month = this._adapter.getMonth(this.tmpActiveDate);
-          // const year = this._adapter.getYear(this.activeDate);
-          // const date = new Date(year, month, 1);
-          // console.log('tmpActiveDate', this.tmpActiveDate);
-          // console.log('activeDate',this.activeDate);
-          // console.log('activeYearDate',this.activeYearDate);
-          // console.log('date', date);
-          // this.activeDate = this.tmpActiveDate || this.activeYearDate;
+          const date = this._adapter.getMonth(this.tmpActiveDate);
+          const month = this._adapter.getMonth(this.tmpActiveDate);
+          const year = this._adapter.getYear(this.activeYearDate);
+          const activeDate = new Date(year, month, date);
+          this.activeDate = activeDate;
         }
         this.checkCurrentView();
       });
@@ -239,7 +237,7 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
     const isPlanned = plannedAliases.includes(aria);
 
     if (isExtra || isPlanned) {
-      this.addPoint(isPlanned, isExtra, aria);
+      setTimeout(() => this.addPoint(isPlanned, isExtra, aria));
     }
   }
 

@@ -6,6 +6,10 @@
   position: relative;
 }
 
+.mat-calendar-body-selected  {
+  color: #317dc7;
+}
+
 .mat-calendar-body-cell-content.info-point::before {
   content: '';
   display: block;
@@ -33,12 +37,8 @@
 .mat-calendar-body-cell-content.extra-point {
   padding: 0 2px;
   background: rgba(#f57c00, .8);
-  border: 1px solid #f57c00;
 }
 
-.mat-calendar-body-selected  {
-  color: #317dc7;
-}
 
 //custom header
 
