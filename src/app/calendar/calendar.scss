@@ -1,0 +1,82 @@
+// set global styles
+
+// custom classes
+
+.mat-calendar-body-cell-content {
+  position: relative;
+}
+
+.mat-calendar-body-cell-content.info-point::before {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #317dc7;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.mat-calendar-body-cell-content.planned-point::before {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #4caf50;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.mat-calendar-body-cell-content.extra-point {
+  padding: 0 2px;
+  background: rgba(#f57c00, .8);
+  border: 1px solid #f57c00;
+}
+
+.mat-calendar-body-selected  {
+  color: #317dc7;
+}
+
+//custom header
+
+.calendar-controls {
+  width: 100%;
+  padding: 24px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.calendar-label {
+  width: 100%;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.calendar-button {
+  background: transparent;
+  border: 0;
+  padding: 0 16px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 1px solid black;
+  outline:none;
+}
+
+.mat-customize {
+  .mat-calendar-body-label {
+    font-size: 0;
+    color: transparent;
+  }
+
+  .mat-calendar-body-label[colspan="7"] {
+    display: none;
+  }
+}
+
+

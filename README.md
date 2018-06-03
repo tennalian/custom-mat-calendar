@@ -1,12 +1,15 @@
 сustom-mat-calendar
 =======================
 
-### Зависимости
+### Customization
+Selection different dates, adding classes to them and styling it.
+
+### Dependencies
 * angular 6
 * material 6.2
-* moment (для локализации)
+* moment (for localization)
 
-### Запуск
+### Run demo
 
 ```sh
   npm run start

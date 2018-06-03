@@ -95,7 +95,7 @@ export class CalendarComponent implements OnDestroy, AfterViewInit, OnChanges {
     if (btn) {
       this.listenClickViewBtnFunc = this.renderer.listenGlobal(btn, 'click', (event: MouseEvent) => {
         if (this.calendar.currentView === 'month') {
-          // bug here, need find active date
+          // bug here, need to find active date
 
           // const month = this._adapter.getMonth(this.tmpActiveDate);
           // const year = this._adapter.getYear(this.activeDate);
